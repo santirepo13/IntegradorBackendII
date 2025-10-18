@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IEstudianteRepositorio extends JpaRepository<Estudiante,Integer> {
+public interface IEstudianteRepositorio extends JpaRepository<Estudiante,Long> {
 
     List<Estudiante>findByPromedio(double promedio);
 }

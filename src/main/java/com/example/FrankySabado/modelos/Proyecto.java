@@ -8,9 +8,9 @@ import jakarta.persistence.*;
 @Table(name = "Proyectos")
 public class Proyecto {
 
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "Titulo", nullable = false)
     private String titulo;
@@ -33,7 +33,7 @@ public class Proyecto {
     public Proyecto() {
     }
 
-    public Proyecto(Integer id, String titulo, String descripcion, String url_proyecto, Tecnologias tecnologias) {
+        public Proyecto(Long id, String titulo, String descripcion, String url_proyecto, Tecnologias tecnologias) {
         this.id = id;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -41,11 +41,11 @@ public class Proyecto {
         this.tecnologias = tecnologias;
     }
 
-    public Integer getId() {
+        public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

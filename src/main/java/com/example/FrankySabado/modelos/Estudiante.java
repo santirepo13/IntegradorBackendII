@@ -11,9 +11,9 @@ import java.util.ArrayList;
 @Table(name = "estudiantes")
 public class Estudiante {
 
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(name = "promedio", nullable = false, unique = false)
     private Double promedio;
     @Column(name = "fechaNacimiento", nullable = false, unique = false)
@@ -40,17 +40,17 @@ public class Estudiante {
     public Estudiante() {
     }
 
-    public Estudiante(Integer id, Double promedio, LocalDate fechaNacimiento) {
+        public Estudiante(Long id, Double promedio, LocalDate fechaNacimiento) {
         this.id = id;
         this.promedio = promedio;
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public Integer getId() {
+        public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

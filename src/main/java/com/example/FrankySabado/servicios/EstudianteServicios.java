@@ -28,8 +28,8 @@ public class EstudianteServicios {
         }
     }
 
-    // 2. Servicio para buscar un estudiante por ID
-    public EstudianteDTO buscarEstudiantePorId(Integer idEstudianteABuscar) throws Exception {
+        // 2. Servicio para buscar un estudiante por ID
+    public EstudianteDTO buscarEstudiantePorId(Long idEstudianteABuscar) throws Exception {
         try {
             Optional<Estudiante> estudianteEncontrado = this.repositorio.findById(idEstudianteABuscar);
             if (estudianteEncontrado.isPresent()) {
@@ -41,6 +41,7 @@ public class EstudianteServicios {
             throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + ex.getMessage(), ex);
         }
     }
+
 
     // 3. Servicio para buscar todos los estudiantes
     public List<EstudianteDTO> buscarTodosLosEstudiantes() throws Exception {

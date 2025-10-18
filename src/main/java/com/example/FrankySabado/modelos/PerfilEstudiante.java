@@ -9,9 +9,9 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "Perfil Estudiante")
 public class PerfilEstudiante {
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "Resumen", nullable = false)
     private String resumen;
@@ -46,7 +46,7 @@ public class PerfilEstudiante {
     public PerfilEstudiante() {
     }
 
-    public PerfilEstudiante(Integer id, String resumen, Intereses intereses, Integer experiencia, String proyectos, Estudiante estudiante, ArrayList<Habilidad> habilidad, ArrayList<Proyecto> proyecto) {
+        public PerfilEstudiante(Long id, String resumen, Intereses intereses, Integer experiencia, String proyectos, Estudiante estudiante, ArrayList<Habilidad> habilidad, ArrayList<Proyecto> proyecto) {
         this.id = id;
         this.resumen = resumen;
         this.intereses = intereses;
@@ -57,11 +57,11 @@ public class PerfilEstudiante {
         this.proyecto = proyecto;
     }
 
-    public Integer getId() {
+        public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
