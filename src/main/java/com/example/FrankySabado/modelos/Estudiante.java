@@ -18,6 +18,10 @@ public class Estudiante {
     private Double promedio;
     @Column(name = "fechaNacimiento", nullable = false, unique = false)
     private LocalDate fechaNacimiento;
+    @Column(name = "programa", length = 100, nullable = true, unique = false)
+    private String programa;
+    @Column(name = "semestre", nullable = true, unique = false)
+    private Integer semestre;
 
     //Relacionandome con 1 Usuario
     @OneToOne
@@ -68,6 +72,22 @@ public class Estudiante {
 
     public void setFechaNacimiento(LocalDate fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getPrograma() {
+        return programa;
+    }
+
+    public void setPrograma(String programa) {
+        this.programa = programa;
+    }
+
+    public Integer getSemestre() {
+        return semestre;
+    }
+
+    public void setSemestre(Integer semestre) {
+        this.semestre = semestre;
     }
 
     public Usuario getUsuario() {
