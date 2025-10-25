@@ -93,4 +93,13 @@ public class PerfilEstudianteControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+    @GetMapping("/estudiante/completo/{id}")
+    public ResponseEntity<?> obtenerPerfilCompletoPorEstudianteId(@PathVariable Long id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(servicio.obtenerPerfilCompletoPorEstudianteId(id));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 }

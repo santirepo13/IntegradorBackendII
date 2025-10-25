@@ -45,6 +45,13 @@ public class ProyectoServicios {
             Proyecto proyecto = new Proyecto();
             proyecto.setTitulo(dto.getTitulo());
             proyecto.setDescripcion(dto.getDescripcion());
+            if (dto.getUrl_proyecto() != null && !dto.getUrl_proyecto().isBlank()) {
+                try {
+                    java.net.URI.create(dto.getUrl_proyecto()).toURL();
+                } catch (java.net.MalformedURLException mue) {
+                    throw new Exception("Formato de URL inválido: " + dto.getUrl_proyecto(), mue);
+                }
+            }
             proyecto.setUrl_proyecto(dto.getUrl_proyecto());
             
             if (dto.getTecnologias() != null) {
@@ -87,9 +94,21 @@ public class ProyectoServicios {
                 throw new PerfilEstudianteNoEncontradoException("Perfil de estudiante no encontrado con id: " + dto.getIdPerfilEstudiante());
             }
 
+            
+            if (!encontrado.get().getPerfilEstudiante().getId().equals(dto.getIdPerfilEstudiante())) {
+                throw new Exception("El proyecto no pertenece al perfil de estudiante especificado");
+            }
+
             Proyecto proyecto = encontrado.get();
             proyecto.setTitulo(dto.getTitulo());
             proyecto.setDescripcion(dto.getDescripcion());
+            if (dto.getUrl_proyecto() != null && !dto.getUrl_proyecto().isBlank()) {
+                try {
+                    java.net.URI.create(dto.getUrl_proyecto()).toURL();
+                } catch (java.net.MalformedURLException mue) {
+                    throw new Exception("Formato de URL inválido: " + dto.getUrl_proyecto(), mue);
+                }
+            }
             proyecto.setUrl_proyecto(dto.getUrl_proyecto());
             
             if (dto.getTecnologias() != null) {

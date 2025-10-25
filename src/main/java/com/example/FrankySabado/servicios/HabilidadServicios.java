@@ -145,11 +145,20 @@ public class HabilidadServicios {
         }
     }
 
-    public void eliminar(Long id) throws Exception {
+        public void eliminar(Long id) throws Exception {
         try {
-            if (!repositorio.existsById(id)) {
+            Optional<Habilidad> encontrado = repositorio.findById(id);
+            if (encontrado.isEmpty()) {
                 throw new HabilidadNoEncontradaException("Habilidad no encontrada con id: " + id);
             }
+
+            Habilidad habilidad = encontrado.get();
+
+            // Validar que la habilidad pertenece a un perfil de estudiante
+            if (habilidad.getPerfilEstudiante() == null || habilidad.getPerfilEstudiante().getId() == null) {
+                throw new Exception("La habilidad no pertenece a ningún perfil de estudiante o no tiene propietario");
+            }
+
             repositorio.deleteById(id);
         } catch (Exception ex) {
             if (ex instanceof HabilidadNoEncontradaException) {

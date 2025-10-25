@@ -3,6 +3,8 @@ package com.example.FrankySabado.servicios;
 import com.example.FrankySabado.ayudas.Intereses;
 import com.example.FrankySabado.ayudas.MensajeError;
 import com.example.FrankySabado.modelos.PerfilEstudiante;
+import com.example.FrankySabado.modelos.Proyecto;
+import com.example.FrankySabado.modelos.Certificado;
 import com.example.FrankySabado.modelos.dtos.PerfilEstudianteDTO;
 import com.example.FrankySabado.modelos.Estudiante;
 import com.example.FrankySabado.repositorios.IPerfilEstudianteRepositorio;
@@ -257,6 +259,81 @@ public class PerfilEstudianteServicios {
             ));
         } catch (Exception ex) {
             throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + " - buscarConFiltros: " + ex.getMessage(), ex);
+        }
+    }
+
+    public PerfilEstudianteDTO obtenerPerfilCompletoPorEstudianteId(Long idEstudiante) throws Exception {
+        try {
+            Optional<PerfilEstudiante> encontrado = repositorio.findByEstudiante_Id(idEstudiante);
+            if (encontrado.isEmpty()) {
+                throw new PerfilNoEncontradoException("Perfil no encontrado para el estudiante: " + idEstudiante);
+            }
+            
+            PerfilEstudiante perfil = encontrado.get();
+            PerfilEstudianteDTO dto = new PerfilEstudianteDTO();
+            dto.setResumen(perfil.getResumen());
+            dto.setIntereses(perfil.getIntereses() != null ? perfil.getIntereses().name() : null);
+            dto.setProyectos(perfil.getProyectos());
+            
+            // Obtener habilidades del perfil
+            if (perfil.getHabilidad() != null && !perfil.getHabilidad().isEmpty()) {
+                StringBuilder habilidadesJson = new StringBuilder("[");
+                for (com.example.FrankySabado.modelos.Habilidad habilidad : perfil.getHabilidad()) {
+                    habilidadesJson.append("{\"nombre\":\"").append(habilidad.getNombre())
+                        .append("\",\"nivel\":").append(habilidad.getNivel())
+                        .append(",\"tipo\":\"").append(habilidad.getTipoHabilidad().name()).append("\"},");
+                }
+                if (habilidadesJson.length() > 1) {
+                    habilidadesJson.setLength(habilidadesJson.length() - 1); // Eliminar última coma
+                }
+                habilidadesJson.append("]");
+                dto.setHabilidades(habilidadesJson.toString());
+            } else {
+                dto.setHabilidades("[]");
+            }
+            
+            // Obtener proyectos del perfil
+            if (perfil.getProyecto() != null && !perfil.getProyecto().isEmpty()) {
+                StringBuilder proyectosJson = new StringBuilder("[");
+                for (Proyecto proyecto : perfil.getProyecto()) {
+                    proyectosJson.append("{\"titulo\":\"").append(proyecto.getTitulo())
+                        .append("\",\"descripcion\":\"").append(proyecto.getDescripcion())
+                        .append("\",\"url\":\"").append(proyecto.getUrl_proyecto())
+                        .append("\",\"tecnologias\":\"").append(proyecto.getTecnologias() != null ? proyecto.getTecnologias().name() : "").append("\"},");
+                }
+                if (proyectosJson.length() > 1) {
+                    proyectosJson.setLength(proyectosJson.length() - 1); // Eliminar última coma
+                }
+                proyectosJson.append("]");
+                dto.setProyectos(proyectosJson.toString());
+            } else {
+                dto.setProyectos("[]");
+            }
+            
+            // Obtener certificados del perfil
+            if (perfil.getCertificado() != null && !perfil.getCertificado().isEmpty()) {
+                StringBuilder certificadosJson = new StringBuilder("[");
+                for (Certificado certificado : perfil.getCertificado()) {
+                    certificadosJson.append("{\"nombre\":\"").append(certificado.getNombre())
+                        .append("\",\"institucion\":\"").append(certificado.getInstitucion().name())
+                        .append("\",\"fecha\":\"").append(certificado.getFecha())
+                        .append("\",\"url\":\"").append(certificado.getUrl_archivo()).append("\"},");
+                }
+                if (certificadosJson.length() > 1) {
+                    certificadosJson.setLength(certificadosJson.length() - 1); // Eliminar última coma
+                }
+                certificadosJson.append("]");
+                dto.setCertificados(certificadosJson.toString());
+            } else {
+                dto.setCertificados("[]");
+            }
+            
+            return dto;
+        } catch (Exception ex) {
+            if (ex instanceof PerfilNoEncontradoException) {
+                throw (PerfilNoEncontradoException) ex;
+            }
+            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + " - obtenerPerfilCompletoPorEstudianteId: " + ex.getMessage(), ex);
         }
     }
 }

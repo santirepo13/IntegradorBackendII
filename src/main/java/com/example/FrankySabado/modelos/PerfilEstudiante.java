@@ -120,4 +120,12 @@ public class PerfilEstudiante {
     public void setProyecto(ArrayList<Proyecto> proyecto) {
         this.proyecto = proyecto;
     }
+
+    public ArrayList<Certificado> getCertificado() {
+        return certificado;
+    }
+
+    public void setCertificado(ArrayList<Certificado> certificado) {
+        this.certificado = certificado;
+    }
 }
