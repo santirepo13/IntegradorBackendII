@@ -69,4 +69,13 @@ public class PerfilEstudianteControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+    @GetMapping("/busqueda")
+    public ResponseEntity<?> buscarPorPalabraClave(@RequestParam String query) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(servicio.buscarPorPalabraClave(query));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 }

@@ -72,11 +72,28 @@ public class Certificado {
         this.fecha = fecha;
     }
 
-    public String getUrl_archivo() {
+        public String getUrl_archivo() {
         return url_archivo;
     }
 
     public void setUrl_archivo(String url_archivo) {
         this.url_archivo = url_archivo;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public PerfilEstudiante getPerfilEstudiante() {
+        return perfilEstudiante;
+    }
+
+    public void setPerfilEstudiante(PerfilEstudiante perfilEstudiante) {
+        this.perfilEstudiante = perfilEstudiante;
+    }
 }
+

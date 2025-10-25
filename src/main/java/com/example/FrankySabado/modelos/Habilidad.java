@@ -29,6 +29,44 @@ public class Habilidad {
 @JsonBackReference(value = "habilidad-perfil")
 private PerfilEstudiante perfilEstudiante;
 
+public Long getId() {
+    return id;
+}
 
+public void setId(Long id) {
+    this.id = id;
+}
+
+public String getNombre() {
+    return nombre;
+}
+
+public void setNombre(String nombre) {
+    this.nombre = nombre;
+}
+
+public Integer getNivel() {
+    return nivel;
+}
+
+public void setNivel(Integer nivel) {
+    this.nivel = nivel;
+}
+
+public TipoHabilidad getTipoHabilidad() {
+    return tipoHabilidad;
+}
+
+public void setTipoHabilidad(TipoHabilidad tipoHabilidad) {
+    this.tipoHabilidad = tipoHabilidad;
+}
+
+public PerfilEstudiante getPerfilEstudiante() {
+    return perfilEstudiante;
+}
+
+public void setPerfilEstudiante(PerfilEstudiante perfilEstudiante) {
+    this.perfilEstudiante = perfilEstudiante;
+}
 
 }

@@ -160,4 +160,17 @@ public class PerfilEstudianteServicios {
     public PerfilEstudianteDTO buscarPorEstudianteId(Long idEstudiante) throws Exception {
         return buscarPorEstudiante(idEstudiante);
     }
+
+    public List<PerfilEstudianteDTO> buscarPorPalabraClave(String query) throws Exception {
+        try {
+            List<PerfilEstudiante> perfiles = repositorio.buscarPorPalabraClave(query);
+            List<PerfilEstudianteDTO> dtos = new ArrayList<>();
+            for (PerfilEstudiante p : perfiles) {
+                dtos.add(new PerfilEstudianteDTO(p.getResumen(), p.getIntereses() != null ? p.getIntereses().name() : null, p.getProyectos(), "[]"));
+            }
+            return dtos;
+        } catch (Exception ex) {
+            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + " - buscarPorPalabraClave: " + ex.getMessage(), ex);
+        }
+    }
 }
