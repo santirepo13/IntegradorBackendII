@@ -1,5 +1,6 @@
 package com.example.FrankySabado.modelos;
 
+import com.example.FrankySabado.ayudas.Programa;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -18,8 +19,9 @@ public class Estudiante {
     private Double promedio;
     @Column(name = "fechaNacimiento", nullable = false, unique = false)
     private LocalDate fechaNacimiento;
-    @Column(name = "programa", length = 100, nullable = true, unique = false)
-    private String programa;
+    @Column(name = "programa", nullable = true, unique = false)
+    @Enumerated(EnumType.STRING)
+    private Programa programa;
     @Column(name = "semestre", nullable = true, unique = false)
     private Integer semestre;
 
@@ -74,11 +76,11 @@ public class Estudiante {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public String getPrograma() {
+    public Programa getPrograma() {
         return programa;
     }
 
-    public void setPrograma(String programa) {
+    public void setPrograma(Programa programa) {
         this.programa = programa;
     }
 
