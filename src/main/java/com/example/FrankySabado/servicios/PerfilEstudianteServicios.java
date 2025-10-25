@@ -1,13 +1,16 @@
 package com.example.FrankySabado.servicios;
 
+import com.example.FrankySabado.ayudas.Intereses;
 import com.example.FrankySabado.ayudas.MensajeError;
 import com.example.FrankySabado.modelos.PerfilEstudiante;
+import com.example.FrankySabado.modelos.dtos.PerfilEstudianteDTO;
 import com.example.FrankySabado.repositorios.IPerfilEstudianteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class PerfilEstudianteServicios {
@@ -15,86 +18,146 @@ public class PerfilEstudianteServicios {
     @Autowired
     private IPerfilEstudianteRepositorio repositorio;
 
-    // Guardar un perfil
-    public PerfilEstudiante guardarPerfil(PerfilEstudiante perfil) throws Exception {
-        try {
-            return this.repositorio.save(perfil);
-        } catch (Exception ex) {
-            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + ex.getMessage(), ex);
+
+    public static class PerfilNoEncontradoException extends Exception {
+        public PerfilNoEncontradoException(String mensaje) {
+            super(mensaje);
         }
     }
 
-    // Buscar perfil por id
-    public PerfilEstudiante buscarPerfilPorId(Long idPerfil) throws Exception {
+    public PerfilEstudianteDTO crear(PerfilEstudianteDTO dto) throws Exception {
         try {
-            Optional<PerfilEstudiante> encontrado = this.repositorio.findById(idPerfil);
-            if (encontrado.isPresent()) {
-                return encontrado.get();
-            } else {
-                throw new Exception(MensajeError.USUARIO_NO_ECONTRADO.getDescripcion());
+            PerfilEstudiante entidad = new PerfilEstudiante();
+            entidad.setResumen(dto.getResumen());
+            if (dto.getIntereses() != null) {
+                try {
+                    entidad.setIntereses(Intereses.valueOf(dto.getIntereses()));
+                } catch (IllegalArgumentException iae) {
+                    throw new Exception("Valor de intereses inválido: " + dto.getIntereses(), iae);
+                }
             }
+            entidad.setProyectos(dto.getProyectos());
+            // relaciones/habilidades se omiten en DTO
+            PerfilEstudiante guardado = repositorio.save(entidad);
+
+            PerfilEstudianteDTO resultado = new PerfilEstudianteDTO();
+            resultado.setResumen(guardado.getResumen());
+            resultado.setIntereses(guardado.getIntereses() != null ? guardado.getIntereses().name() : null);
+            resultado.setProyectos(guardado.getProyectos());
+            resultado.setHabilidades("[]");
+            return resultado;
         } catch (Exception ex) {
-            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + ex.getMessage(), ex);
-        }
-    }
-
-    // Buscar todos los perfiles
-    public List<PerfilEstudiante> buscarTodosLosPerfiles() throws Exception {
-        try {
-            return this.repositorio.findAll();
-        } catch (Exception ex) {
-            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + ex.getMessage(), ex);
-        }
-    }
-
-    // Actualizar perfil
-    public PerfilEstudiante actualizarPerfil(Long idPerfil, PerfilEstudiante datosActualizados) throws Exception {
-        try {
-            Optional<PerfilEstudiante> encontrado = this.repositorio.findById(idPerfil);
-            if (encontrado.isPresent()) {
-                PerfilEstudiante perfil = encontrado.get();
-
-                perfil.setResumen(datosActualizados.getResumen());
-                perfil.setIntereses(datosActualizados.getIntereses());
-                perfil.setExperiencia(datosActualizados.getExperiencia());
-                perfil.setProyectos(datosActualizados.getProyectos());
-                perfil.setEstudiante(datosActualizados.getEstudiante());
-                perfil.setHabilidad(datosActualizados.getHabilidad());
-                perfil.setProyecto(datosActualizados.getProyecto());
-
-                return this.repositorio.save(perfil);
-            } else {
-                throw new Exception(MensajeError.USUARIO_NO_ECONTRADO.getDescripcion());
+            if (ex instanceof PerfilNoEncontradoException) {
+                throw (PerfilNoEncontradoException) ex;
             }
-        } catch (Exception ex) {
-            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + ex.getMessage(), ex);
+            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + " - crear: " + ex.getMessage(), ex);
         }
     }
 
-    // Eliminar perfil
-    public void eliminarPerfil(Long idPerfil) throws Exception {
+    public PerfilEstudianteDTO actualizar(Long id, PerfilEstudianteDTO dto) throws Exception {
         try {
-            if (this.repositorio.existsById(idPerfil)) {
-                this.repositorio.deleteById(idPerfil);
-            } else {
-                throw new Exception(MensajeError.USUARIO_NO_ECONTRADO.getDescripcion());
+            Optional<PerfilEstudiante> encontrado = repositorio.findById(id);
+            if (encontrado.isEmpty()) {
+                throw new PerfilNoEncontradoException("Perfil no encontrado con id: " + id);
             }
+            PerfilEstudiante perfil = encontrado.get();
+            perfil.setResumen(dto.getResumen());
+            perfil.setProyectos(dto.getProyectos());
+            if (dto.getIntereses() != null) {
+                try {
+                    perfil.setIntereses(Intereses.valueOf(dto.getIntereses()));
+                } catch (IllegalArgumentException iae) {
+                    throw new Exception("Valor de intereses inválido: " + dto.getIntereses(), iae);
+                }
+            }
+
+            PerfilEstudiante guardado = repositorio.save(perfil);
+
+            PerfilEstudianteDTO res = new PerfilEstudianteDTO(guardado.getResumen(), guardado.getIntereses() != null ? guardado.getIntereses().name() : null, guardado.getProyectos(), "[]");
+            return res;
         } catch (Exception ex) {
-            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + ex.getMessage(), ex);
+            if (ex instanceof PerfilNoEncontradoException) {
+                throw (PerfilNoEncontradoException) ex;
+            }
+            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + " - actualizar: " + ex.getMessage(), ex);
         }
     }
 
-    // Buscar perfil por estudiante id
-    public PerfilEstudiante buscarPorEstudianteId(Long idEstudiante) throws Exception {
+    public PerfilEstudianteDTO buscarPorEstudiante(Long idEstudiante) throws Exception {
         try {
-            Optional<PerfilEstudiante> encontrado = this.repositorio.findByEstudianteId(idEstudiante);
-            if (encontrado.isPresent()) {
-                return encontrado.get();
-            } else {
-                throw new Exception(MensajeError.USUARIO_NO_ECONTRADO.getDescripcion());
+            Optional<PerfilEstudiante> encontrado = repositorio.findByEstudiante_Id(idEstudiante);
+            if (encontrado.isEmpty()) {
+                throw new PerfilNoEncontradoException("Perfil no encontrado para el estudiante: " + idEstudiante);
             }
+            PerfilEstudiante perfil = encontrado.get();
+            return new PerfilEstudianteDTO(perfil.getResumen(), perfil.getIntereses() != null ? perfil.getIntereses().name() : null, perfil.getProyectos(), "[]");
         } catch (Exception ex) {
-            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + ex.getMessage(), ex);
+            if (ex instanceof PerfilNoEncontradoException) {
+                throw (PerfilNoEncontradoException) ex;
+            }
+            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + " - buscar: " + ex.getMessage(), ex);
         }
+    }
+
+    public void eliminar(Long id) throws Exception {
+        try {
+            if (!repositorio.existsById(id)) {
+                throw new PerfilNoEncontradoException("Perfil no encontrado con id: " + id);
+            }
+            repositorio.deleteById(id);
+        } catch (Exception ex) {
+            if (ex instanceof PerfilNoEncontradoException) {
+                throw (PerfilNoEncontradoException) ex;
+            }
+            throw new Exception(MensajeError.ERROR_GENERAL_API.getDescripcion() + " - eliminar: " + ex.getMessage(), ex);
+        }
+    }
+
+    // Nuevas wrappers para alinear con PerfilEstudianteControlador
+
+    public PerfilEstudianteDTO guardarPerfil(PerfilEstudiante perfil) throws Exception {
+        PerfilEstudianteDTO dto = new PerfilEstudianteDTO(
+            perfil.getResumen(),
+            perfil.getIntereses() != null ? perfil.getIntereses().name() : null,
+            perfil.getProyectos(),
+            "[]"
+        );
+        return crear(dto);
+    }
+
+    public PerfilEstudianteDTO buscarPerfilPorId(Long id) throws Exception {
+        Optional<PerfilEstudiante> encontrado = repositorio.findById(id);
+        if (encontrado.isEmpty()) {
+            throw new PerfilNoEncontradoException("Perfil no encontrado con id: " + id);
+        }
+        PerfilEstudiante p = encontrado.get();
+        return new PerfilEstudianteDTO(p.getResumen(), p.getIntereses() != null ? p.getIntereses().name() : null, p.getProyectos(), "[]");
+    }
+
+    public List<PerfilEstudianteDTO> buscarTodosLosPerfiles() throws Exception {
+        List<PerfilEstudiante> lista = repositorio.findAll();
+        List<PerfilEstudianteDTO> dtos = new ArrayList<>();
+        for (PerfilEstudiante p : lista) {
+            dtos.add(new PerfilEstudianteDTO(p.getResumen(), p.getIntereses() != null ? p.getIntereses().name() : null, p.getProyectos(), "[]"));
+        }
+        return dtos;
+    }
+
+    public PerfilEstudianteDTO actualizarPerfil(Long id, PerfilEstudiante perfil) throws Exception {
+        PerfilEstudianteDTO dto = new PerfilEstudianteDTO(
+            perfil.getResumen(),
+            perfil.getIntereses() != null ? perfil.getIntereses().name() : null,
+            perfil.getProyectos(),
+            "[]"
+        );
+        return actualizar(id, dto);
+    }
+
+    public void eliminarPerfil(Long id) throws Exception {
+        eliminar(id);
+    }
+
+    public PerfilEstudianteDTO buscarPorEstudianteId(Long idEstudiante) throws Exception {
+        return buscarPorEstudiante(idEstudiante);
     }
 }

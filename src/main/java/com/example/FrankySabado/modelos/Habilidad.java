@@ -2,10 +2,9 @@ package com.example.FrankySabado.modelos;
 
 import com.example.FrankySabado.ayudas.TipoHabilidad;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
+
 
 @Entity
 @Table(name="Habilidades")

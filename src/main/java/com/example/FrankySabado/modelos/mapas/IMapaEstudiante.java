@@ -11,8 +11,9 @@ import java.util.List;
 
 public interface IMapaEstudiante {
 
-    @Mapping(source ="usuario.nombre", target = "nombre")
-    @Mapping(source ="usuario.rol", target = "rol")
+        @Mapping(source = "usuario.nombre", target = "nombre")
+    @Mapping(source = "usuario.rol", target = "rol")
+    @Mapping(source = "fechaNacimiento", target = "fechanacimiento")
     EstudianteDTO toDTO(Estudiante estudiante);
 
     //Mapeo de listas
